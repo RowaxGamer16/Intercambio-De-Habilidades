@@ -1,7 +1,0 @@
-{
-  "name": "Habilix",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "react-vite"
-}
