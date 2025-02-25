@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   IonPage,
   IonHeader,
@@ -16,25 +16,26 @@ import {
   IonRow,
   IonCol,
   IonIcon,
-} from '@ionic/react';
-import { star, starOutline } from 'ionicons/icons';
-import './Cursos.css';
-import { BrowserRouter as Router, Route, Switch, useHistory } from 'react-router-dom';
+} from "@ionic/react";
+import { star, starOutline } from "ionicons/icons";
+import "./Cursos.css";
+import { useHistory } from "react-router-dom";
+import { cursosData } from "./cursosData"; // Importar los datos compartidos
 
 const Cursos: React.FC = () => {
   const history = useHistory();
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedCurso, setSelectedCurso] = useState<any>(null);
-  const [comentarios, setComentarios] = useState<{ [id: number]: string[] }>(
-    () => JSON.parse(localStorage.getItem('comentarios') || '{}')
+  const [comentarios, setComentarios] = useState<{ [id: number]: string[] }>(() =>
+    JSON.parse(localStorage.getItem("comentarios") || "{}")
   );
-  const [ranking, setRanking] = useState<{ [id: number]: number }>(
-    () => JSON.parse(localStorage.getItem('ranking') || '{}')
+  const [ranking, setRanking] = useState<{ [id: number]: number }>(() =>
+    JSON.parse(localStorage.getItem("ranking") || "{}")
   );
-  const [nuevoComentario, setNuevoComentario] = useState('');
-  const [suscripciones, setSuscripciones] = useState<{ [id: number]: boolean }>(
-    () => JSON.parse(localStorage.getItem('suscripciones') || '{}')
+  const [nuevoComentario, setNuevoComentario] = useState("");
+  const [suscripciones, setSuscripciones] = useState<{ [id: number]: boolean }>(() =>
+    JSON.parse(localStorage.getItem("suscripciones") || "{}")
   );
 
   const handleEntrarCurso = (curso: any) => {
@@ -42,49 +43,18 @@ const Cursos: React.FC = () => {
   };
 
   useEffect(() => {
-    localStorage.setItem('comentarios', JSON.stringify(comentarios));
+    localStorage.setItem("comentarios", JSON.stringify(comentarios));
   }, [comentarios]);
 
   useEffect(() => {
-    localStorage.setItem('ranking', JSON.stringify(ranking));
+    localStorage.setItem("ranking", JSON.stringify(ranking));
   }, [ranking]);
 
   useEffect(() => {
-    localStorage.setItem('suscripciones', JSON.stringify(suscripciones));
+    localStorage.setItem("suscripciones", JSON.stringify(suscripciones));
   }, [suscripciones]);
 
-  const cursos = [
-    {
-      id: 1,
-      titulo: 'Introducción a React',
-      descripcion: 'Aprende los fundamentos de React y cómo crear aplicaciones interactivas.',
-      entrega: 'Fecha de entrega: miércoles',
-      horario: '13:00 – Revisión No. 3',
-      profesor: 'Jose Rijo',
-      imagen: 'https://via.placeholder.com/150',
-    },
-    {
-      id: 2,
-      titulo: 'Desarrollo con Python',
-      descripcion: 'Domina Python desde lo básico hasta avanzado, con ejemplos prácticos.',
-      entrega: 'Fecha de entrega: lunes',
-      horario: '10:00 – Clase 4',
-      profesor: 'Ana Torres',
-      imagen: 'https://via.placeholder.com/150',
-    },
-    {
-      id: 3,
-      titulo: 'Diseño UX/UI',
-      descripcion: 'Entiende los principios del diseño centrado en el usuario.',
-      entrega: 'Fecha de entrega: viernes',
-      horario: '15:00 – Proyecto final',
-      profesor: 'Luis Gómez',
-      imagen: 'https://via.placeholder.com/150',
-    },
-  
-  ];
-
-  const cursosFiltrados = cursos.filter(
+  const cursosFiltrados = cursosData.filter(
     (curso) =>
       curso.titulo.toLowerCase().includes(searchText.toLowerCase()) ||
       curso.descripcion.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -92,12 +62,12 @@ const Cursos: React.FC = () => {
   );
 
   const guardarComentario = () => {
-    if (nuevoComentario.trim() !== '') {
+    if (nuevoComentario.trim() !== "") {
       setComentarios((prevComentarios) => ({
         ...prevComentarios,
         [selectedCurso.id]: [...(prevComentarios[selectedCurso.id] || []), nuevoComentario],
       }));
-      setNuevoComentario('');
+      setNuevoComentario("");
     }
   };
 
@@ -108,11 +78,19 @@ const Cursos: React.FC = () => {
     }));
   };
 
-  const toggleSuscripcion = (id: number) => {
-    setSuscripciones((prevSuscripciones) => ({
-      ...prevSuscripciones,
-      [id]: !prevSuscripciones[id],
-    }));
+  const toggleSuscripcion = (id: number, titulo: string) => {
+    setSuscripciones((prevSuscripciones) => {
+      const nuevasSuscripciones = {
+        ...prevSuscripciones,
+        [id]: !prevSuscripciones[id],
+      };
+      if (!prevSuscripciones[id]) {
+        alert(`Te has suscrito al curso: ${titulo}`);
+      } else {
+        alert(`Te has desuscrito del curso: ${titulo}`);
+      }
+      return nuevasSuscripciones;
+    });
   };
 
   return (
@@ -149,7 +127,7 @@ const Cursos: React.FC = () => {
                       key={estrella}
                       icon={estrella <= (ranking[curso.id] || 0) ? star : starOutline}
                       onClick={() => cambiarRanking(curso.id, estrella)}
-                      style={{ color: 'gold', cursor: 'pointer', fontSize: '20px' }}
+                      style={{ color: "gold", cursor: "pointer", fontSize: "20px" }}
                     />
                   ))}
                 </div>
@@ -170,7 +148,10 @@ const Cursos: React.FC = () => {
                     Entrar al curso
                   </IonButton>
                 ) : (
-                  <IonButton color="secondary" onClick={() => toggleSuscripcion(curso.id)}>
+                  <IonButton
+                    color="secondary"
+                    onClick={() => toggleSuscripcion(curso.id, curso.titulo)}
+                  >
                     Suscribirse
                   </IonButton>
                 )}
@@ -193,7 +174,7 @@ const Cursos: React.FC = () => {
             <div className="comentarios-list">
               {comentarios[selectedCurso?.id]?.length ? (
                 comentarios[selectedCurso.id].map((comentario, index) => (
-                  <p key={index}>&bull; {comentario}</p>
+                  <p key={index}>• {comentario}</p>
                 ))
               ) : (
                 <p>No hay comentarios aún.</p>

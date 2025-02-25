@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   IonPage,
   IonHeader,
@@ -19,50 +19,46 @@ import {
   IonButton,
   IonToggle,
   IonInput,
-} from '@ionic/react';
-import './Perfil.css';
+} from "@ionic/react";
+import "./Perfil.css";
+import { cursosData } from "./cursosData"; // Importar los datos compartidos
 
 const Perfil: React.FC = () => {
-  // Estados para el modo oscuro y notificaciones
   const [darkMode, setDarkMode] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-
-  // Estados para el Panel de Control
   const [actividad, setActividad] = useState<any[]>([]);
   const [intercambios, setIntercambios] = useState<any[]>([]);
   const [mensajes, setMensajes] = useState<any[]>([]);
   const [notificaciones, setNotificaciones] = useState<any[]>([]);
+  const [suscripciones, setSuscripciones] = useState<{ [id: number]: boolean }>(() =>
+    JSON.parse(localStorage.getItem("suscripciones") || "{}")
+  );
 
-  // Simulación de datos para el Panel de Control
   useEffect(() => {
-    // Datos simulados
     setActividad([
-      { id: 1, descripcion: 'Completó el curso de React', fecha: '2025-01-10' },
-      { id: 2, descripcion: 'Inició el curso de Ionic', fecha: '2025-01-12' },
+      { id: 1, descripcion: "Completó el curso de React", fecha: "2025-01-10" },
+      { id: 2, descripcion: "Inició el curso de Ionic", fecha: "2025-01-12" },
     ]);
-    setIntercambios([
-      { id: 1, descripcion: 'Intercambio de habilidades con María', fecha: '2025-01-11' },
-    ]);
+    setIntercambios([{ id: 1, descripcion: "Intercambio de habilidades con María", fecha: "2025-01-11" }]);
     setMensajes([
-      { id: 1, remitente: 'Carlos', contenido: 'Hola, ¿quieres intercambiar habilidades?', fecha: '2025-01-13' },
+      { id: 1, remitente: "Carlos", contenido: "Hola, ¿quieres intercambiar habilidades?", fecha: "2025-01-13" },
     ]);
-    setNotificaciones([
-      { id: 1, contenido: 'Tienes una nueva solicitud de intercambio', fecha: '2025-01-14' },
-    ]);
+    setNotificaciones([{ id: 1, contenido: "Tienes una nueva solicitud de intercambio", fecha: "2025-01-14" }]);
   }, []);
 
-  // Función para alternar el modo oscuro
+  // Filtrar los cursos suscritos
+  const cursosSuscritos = cursosData.filter((curso) => suscripciones[curso.id]);
+
   const toggleDarkMode = (e: any) => {
     const isDarkModeEnabled = e.detail.checked;
     setDarkMode(isDarkModeEnabled);
     if (isDarkModeEnabled) {
-      document.body.classList.add('dark');
+      document.body.classList.add("dark");
     } else {
-      document.body.classList.remove('dark');
+      document.body.classList.remove("dark");
     }
   };
 
-  // Función para alternar las notificaciones
   const toggleNotifications = async (e: any) => {
     const isEnabled = e.detail.checked;
 
@@ -88,7 +84,6 @@ const Perfil: React.FC = () => {
     }
   };
 
-  // Función para enviar una notificación de prueba
   const sendTestNotification = () => {
     if (notificationsEnabled && "Notification" in window) {
       new Notification("Notificación de prueba", {
@@ -108,7 +103,6 @@ const Perfil: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        {/* Sección de perfil */}
         <IonCard>
           <IonCardHeader>
             <IonGrid>
@@ -129,7 +123,6 @@ const Perfil: React.FC = () => {
           </IonCardHeader>
         </IonCard>
 
-        {/* Panel de Control */}
         <IonCard>
           <IonCardHeader>
             <IonText color="primary">
@@ -137,7 +130,27 @@ const Perfil: React.FC = () => {
             </IonText>
           </IonCardHeader>
           <IonCardContent>
-            {/* Actividad Reciente */}
+            {/* Cursos Suscritos */}
+            <IonText>
+              <h4>Cursos Suscritos</h4>
+            </IonText>
+            <IonList>
+              {cursosSuscritos.length > 0 ? (
+                cursosSuscritos.map((curso) => (
+                  <IonItem key={curso.id}>
+                    <IonLabel>
+                      <h2>{curso.titulo}</h2>
+                      <p>Profesor: {curso.profesor}</p>
+                    </IonLabel>
+                  </IonItem>
+                ))
+              ) : (
+                <IonItem>
+                  <IonLabel>No estás suscrito a ningún curso.</IonLabel>
+                </IonItem>
+              )}
+            </IonList>
+
             <IonText>
               <h4>Actividad Reciente</h4>
             </IonText>
@@ -152,7 +165,6 @@ const Perfil: React.FC = () => {
               ))}
             </IonList>
 
-            {/* Intercambios */}
             <IonText>
               <h4>Intercambios</h4>
             </IonText>
@@ -167,7 +179,6 @@ const Perfil: React.FC = () => {
               ))}
             </IonList>
 
-            {/* Mensajes */}
             <IonText>
               <h4>Mensajes</h4>
             </IonText>
@@ -183,7 +194,6 @@ const Perfil: React.FC = () => {
               ))}
             </IonList>
 
-            {/* Notificaciones */}
             <IonText>
               <h4>Notificaciones</h4>
             </IonText>
@@ -200,7 +210,6 @@ const Perfil: React.FC = () => {
           </IonCardContent>
         </IonCard>
 
-        {/* Opciones en forma de tabla */}
         <IonCard>
           <IonCardHeader>
             <IonText color="primary">
@@ -214,10 +223,7 @@ const Perfil: React.FC = () => {
                   <IonLabel>Modo oscuro</IonLabel>
                 </IonCol>
                 <IonCol>
-                  <IonToggle
-                    checked={darkMode}
-                    onIonChange={toggleDarkMode}
-                  ></IonToggle>
+                  <IonToggle checked={darkMode} onIonChange={toggleDarkMode}></IonToggle>
                 </IonCol>
               </IonRow>
               <IonRow>
@@ -225,29 +231,19 @@ const Perfil: React.FC = () => {
                   <IonLabel>Notificaciones</IonLabel>
                 </IonCol>
                 <IonCol>
-                  <IonToggle
-                    checked={notificationsEnabled}
-                    onIonChange={toggleNotifications}
-                  ></IonToggle>
+                  <IonToggle checked={notificationsEnabled} onIonChange={toggleNotifications}></IonToggle>
                 </IonCol>
               </IonRow>
             </IonGrid>
 
-            {/* Botón para enviar notificación de prueba */}
             {notificationsEnabled && (
-              <IonButton
-                expand="block"
-                color="secondary"
-                onClick={sendTestNotification}
-                style={{ marginTop: '15px' }}
-              >
+              <IonButton expand="block" color="secondary" onClick={sendTestNotification} style={{ marginTop: "15px" }}>
                 Enviar notificación de prueba
               </IonButton>
             )}
           </IonCardContent>
         </IonCard>
 
-        {/* Cambiar contraseña */}
         <IonCard>
           <IonCardHeader>
             <IonText color="primary">
@@ -257,36 +253,22 @@ const Perfil: React.FC = () => {
           <IonCardContent>
             <IonItem>
               <IonLabel position="stacked">Contraseña actual</IonLabel>
-              <IonInput
-                type="password"
-                placeholder="Ingresa tu contraseña actual"
-              ></IonInput>
+              <IonInput type="password" placeholder="Ingresa tu contraseña actual"></IonInput>
             </IonItem>
             <IonItem>
               <IonLabel position="stacked">Nueva contraseña</IonLabel>
-              <IonInput
-                type="password"
-                placeholder="Ingresa tu nueva contraseña"
-              ></IonInput>
+              <IonInput type="password" placeholder="Ingresa tu nueva contraseña"></IonInput>
             </IonItem>
             <IonItem>
               <IonLabel position="stacked">Confirmar nueva contraseña</IonLabel>
-              <IonInput
-                type="password"
-                placeholder="Confirma tu nueva contraseña"
-              ></IonInput>
+              <IonInput type="password" placeholder="Confirma tu nueva contraseña"></IonInput>
             </IonItem>
-            <IonButton
-              expand="block"
-              color="primary"
-              style={{ marginTop: '15px' }}
-            >
+            <IonButton expand="block" color="primary" style={{ marginTop: "15px" }}>
               Guardar cambios
             </IonButton>
           </IonCardContent>
         </IonCard>
 
-        {/* Cerrar sesión */}
         <IonCard>
           <IonCardHeader>
             <IonText color="danger">
@@ -294,11 +276,7 @@ const Perfil: React.FC = () => {
             </IonText>
           </IonCardHeader>
           <IonCardContent>
-            <IonButton
-              expand="block"
-              color="danger"
-              style={{ marginTop: '15px' }}
-            >
+            <IonButton expand="block" color="danger" style={{ marginTop: "15px" }}>
               Cerrar sesión
             </IonButton>
           </IonCardContent>
