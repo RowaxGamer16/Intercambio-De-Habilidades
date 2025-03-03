@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import './App.css';
 import {
@@ -28,6 +28,8 @@ import Ayuda from './pages/Ayuda';
 import Login from './pages/Login';
 import Perfil from './pages/Perfil';
 import MaterialesCurso from './components/MaterialesCurso';
+import InicioUsuario from './pages/Inicio_Usuario';
+import PrivateRoute from './pages/PrivateRoute';
 
 import '@ionic/react/css/core.css';
 import '@ionic/react/css/normalize.css';
@@ -39,10 +41,18 @@ import '@ionic/react/css/text-alignment.css';
 import '@ionic/react/css/text-transformation.css';
 import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
-
 setupIonicReact();
 
 const App: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   const materiales = {
     1: ['Introducción a React', 'Componentes y Props', 'Hooks'],
     2: ['Fundamentos de Python', 'Manejo de Archivos', 'OOP'],
@@ -52,26 +62,21 @@ const App: React.FC = () => {
   return (
     <IonApp>
       <IonReactRouter>
-        {/* Header */}
         <IonHeader>
           <IonToolbar>
             <IonGrid>
               <IonRow className="ion-align-items-center">
                 <IonCol size="12" size-md="4" className="ion-text-start">
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <IonImg
-                      src="/Habilix.jpg"
-                      alt="Logo"
-                      style={{ width: '90px', height: 'auto', marginRight: '10px' }}
-                    />
+                    <IonImg src="/Habilix.jpg" alt="Logo" style={{ width: '90px', height: 'auto', marginRight: '10px' }} />
                     <IonLabel>Habilix</IonLabel>
                   </div>
                 </IonCol>
                 <IonCol size="12" size-md="8" className="ion-text-end">
                   <IonButtons>
-                    <IonButton routerLink="/Inicio">
+                    <IonButton routerLink={isLoggedIn ? "/Inicio_Usuario" : "/Inicio"}>
                       <IonIcon icon={home} slot="start" />
-                      Inicio
+                      {isLoggedIn ? 'Inicio_Usuario' : 'Inicio'}
                     </IonButton>
                     <IonButton routerLink="/Cursos">
                       <IonIcon icon={school} slot="start" />
@@ -85,18 +90,20 @@ const App: React.FC = () => {
                       <IonIcon icon={helpCircle} slot="start" />
                       Ayuda
                     </IonButton>
-                    <IonButton routerLink="/tab5">
-                      <IonIcon icon={logIn} slot="start" />
-                      Registro
-                    </IonButton>
-                    <IonButton routerLink="/Login">
-                      <IonIcon icon={logIn} slot="start" />
-                      Iniciar sesión
-                    </IonButton>
-                    <IonButton routerLink="/Perfil">
-                      <IonIcon icon={personCircle} slot="start" />
-                      Perfil
-                    </IonButton>
+                    {!isLoggedIn ? (
+                      <IonButton routerLink="/Login">
+                        <IonIcon icon={logIn} slot="start" />
+                        Login / Registro
+                      </IonButton>
+                    ) : (
+                      <>
+                        <IonButton routerLink="/Perfil">
+                          <IonIcon icon={personCircle} slot="start" />
+                          Perfil
+                        </IonButton>
+                        
+                      </>
+                    )}
                   </IonButtons>
                 </IonCol>
               </IonRow>
@@ -104,38 +111,28 @@ const App: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        {/* Content */}
         <IonContent>
           <IonRouterOutlet>
-            <Route exact path="/Inicio" component={Inicio} />
+            <Route exact path="/Inicio" render={() => (isLoggedIn ? <Redirect to="/Inicio_Usuario" /> : <Inicio />)} />
             <Route exact path="/Cursos" component={Cursos} />
             <Route exact path="/Contactos" component={Contactos} />
             <Route exact path="/Ayuda" component={Ayuda} />
             <Route exact path="/Login" component={Login} />
-            <Route exact path="/Perfil" component={Perfil} />
-            <Route
-              exact
-              path="/materiales/:id"
-              render={(props) => <MaterialesCurso {...props} materiales={materiales} />}
-            />
+            <PrivateRoute exact path="/Perfil" component={Perfil} isLoggedIn={isLoggedIn} />
+            <PrivateRoute exact path="/Inicio_Usuario" component={InicioUsuario} isLoggedIn={isLoggedIn} />
             <Route exact path="/">
               <Redirect to="/Inicio" />
             </Route>
           </IonRouterOutlet>
         </IonContent>
 
-        {/* Footer */}
         <IonFooter>
           <IonToolbar>
             <IonGrid>
               <IonRow>
                 <IonCol size="12" size-md="4" className="ion-text-start">
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <IonImg
-                      src="/Habilix.jpg"
-                      alt="Logo Habilix"
-                      style={{ width: '60px', height: 'auto', marginRight: '10px' }}
-                    />
+                    <IonImg src="/Habilix.jpg" alt="Logo Habilix" style={{ width: '60px', height: 'auto', marginRight: '10px' }} />
                     <IonText>
                       <h4>Habilix</h4>
                     </IonText>

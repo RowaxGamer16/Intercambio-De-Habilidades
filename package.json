@@ -1,17 +1,16 @@
 {
-  "name": "Habilix",
-  "private": true,
-  "version": "0.0.1",
-  "type": "module",
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "test.e2e": "cypress run",
-    "test.unit": "vitest",
-    "lint": "eslint"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
+<<<<<<< HEAD
     "@capacitor/app": "6.0.2",
     "@capacitor/core": "6.2.0",
     "@capacitor/haptics": "6.0.2",
@@ -23,18 +22,22 @@
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.7.9",
     "body-parser": "^1.20.3",
+=======
+    "bcryptjs": "^2.4.3",
+>>>>>>> 96af63cd69f0605e4237f256e6b95640af35a3a0
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
+<<<<<<< HEAD
     "git": "^0.1.5",
     "ionicons": "^7.4.0",
+=======
+    "jsonwebtoken": "^9.0.2",
+>>>>>>> 96af63cd69f0605e4237f256e6b95640af35a3a0
     "mysql": "^2.18.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router": "^5.3.4",
-    "react-router-dom": "^5.3.4",
-    "react-slick": "^0.30.3",
-    "slick-carousel": "^1.8.1"
+    "mysql2": "^3.12.0"
   },
+<<<<<<< HEAD
   "devDependencies": {
     "@capacitor/cli": "6.2.0",
     "@ionic/v1-toolkit": "3.2.20",
@@ -59,4 +62,7 @@
     "vitest": "^0.34.6"
   },
   "description": "An Ionic project"
+=======
+  "description": ""
+>>>>>>> 96af63cd69f0605e4237f256e6b95640af35a3a0
 }
